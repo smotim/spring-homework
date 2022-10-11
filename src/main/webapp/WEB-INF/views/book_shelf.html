@@ -15,6 +15,10 @@
             width: 50%;
             border-collapse: collapse;
         }
+        #delete_item_error {
+            text-align: center;
+            color: red;
+        }
 
         table {
             margin: 25px;
@@ -62,7 +66,9 @@
             </tr>
         </table>
     </form>
-
+    <div id="delete_item_error" th:unless="${correctIdToRemove}">
+        <p>Incorrect value to remove book object!</p>
+    </div>
 
     <table id="books">
         <tr>

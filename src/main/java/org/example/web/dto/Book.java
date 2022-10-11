@@ -1,16 +1,16 @@
 package org.example.web.dto;
 
 public class Book {
-    private Integer id;
+    private Long id;
     private String author;
     private String title;
     private Integer size;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

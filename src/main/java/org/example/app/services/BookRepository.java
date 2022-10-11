@@ -6,33 +6,40 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class BookRepository implements ProjectRepository<Book> {
 
     private final Logger logger = Logger.getLogger(BookRepository.class);
-    private final List<Book> repo = new ArrayList<>();
+    private static final Map<Long, Book> repo = new ConcurrentHashMap<>();
+    private static Long lastIndex = 0l;
 
     @Override
     public List<Book> retreiveAll() {
-        return new ArrayList<>(repo);
+        return new ArrayList<>(repo.values());
     }
 
     @Override
     public void store(Book book) {
-        book.setId(book.hashCode());
+        if (book.getAuthor().isBlank() && book.getTitle().isBlank() && book.getSize() == null)
+        {
+            return;
+        }
+        book.setId(lastIndex++);
         logger.info("store new book: " + book);
-        repo.add(book);
+        repo.put(book.getId(), book);
     }
 
     @Override
     public boolean removeItemById(Integer bookIdToRemove) {
-        for (Book book : retreiveAll()) {
-            if (book.getId().equals(bookIdToRemove)) {
-                logger.info("remove book completed: " + book);
-                return repo.remove(book);
+            if (!repo.containsKey(bookIdToRemove)) {
+                String error = String.format("There is no book with this id", bookIdToRemove);
+                logger.error(error);
+                return false;
             }
-        }
-        return false;
+            repo.remove(bookIdToRemove);
+            return true;
     }
 }
